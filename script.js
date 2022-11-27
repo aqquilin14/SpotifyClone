@@ -5,6 +5,7 @@ let audioElement = new Audio('songs/1.mp3');
 let masterPlay = document.getElementById("masterPlay");
 gif = document.getElementById("gif");
 let watchAssistant =0;
+
 console.log(masterPlay);
 let myProgressBar = document.getElementById("myProgressBar");
 // let timeSlider = document.getElementsByClassName(`timestamp${songIndex}`)
@@ -129,10 +130,29 @@ const makeAllPlays = ()=>{
 
 //here we can do something with currentTime, in order handle the click on button other than that of playing song
 Array.from(document.getElementsByClassName("songItemPlay")).forEach((element)=>{
-    element.addEventListener("click", (e)=>{
+      element.addEventListener("click", (e)=>{
       // console.log(e);
+      let indchecker = parseInt(e.target.id);
+      console.log("watchAssistant:" + watchAssistant);
       let x = e.target.classList.contains("fa-play-circle");
-        if( x===true || audioElement.paused || audioElement.currentTime<=0){
+      if(x===true && watchAssistant>0 && indchecker==songIndex){
+        console.log("first condition met");
+        makeAllPlays();
+        songIndex = parseInt(e.target.id);
+        console.log(songIndex);
+        e.target.classList.remove("fa-play-circle");
+        e.target.classList.add("fa-pause-circle");
+        audioElement.src = `songs/${songIndex+1}.mp3`;
+        finishTime.innerText = song[songIndex].time;
+        //audioElement.currentTime = 0;
+        audioElement.currentTime = watchAssistant;
+        audioElement.play();
+        console.log("Playing...");
+        gif.style.opacity = 1;
+        masterSongInfo.innerText = song[songIndex].songName;
+        masterPlay.classList.remove("fa-play-circle");
+        masterPlay.classList.add("fa-pause-circle");
+      }else if( x===true || audioElement.paused || audioElement.currentTime<=0){
             makeAllPlays();
 
             songIndex = parseInt(e.target.id);
@@ -150,7 +170,7 @@ Array.from(document.getElementsByClassName("songItemPlay")).forEach((element)=>{
             masterPlay.classList.remove("fa-play-circle");
             masterPlay.classList.add("fa-pause-circle");
         }else{
-            // watchAssistant = audioElement.currentTime;
+            watchAssistant = audioElement.currentTime;
             audioElement.pause();
             songIndex = parseInt(e.target.id);
             console.log(songIndex);
